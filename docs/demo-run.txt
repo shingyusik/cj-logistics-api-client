@@ -1,0 +1,74 @@
+# 명령: PYTHONPATH=src .venv/bin/python -m cj_toy demo
+# 실행일: 2026-10-28 13:21:58 KST
+1. 정상 접수 2건: 주소 정제 → 채번 → 접수 → 라벨
+{"ts": "2026-10-28T04:21:58.691223+00:00", "level": "INFO", "event": "api_response", "api": "ReqOneDayToken", "attempt": 1, "elapsed_ms": 14, "result_cd": "S", "request": {"CUST_ID": "MOCK_CUSTOMER", "BIZ_REG_NUM": "******0000"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"TOKEN_NUM": "MOCK***", "TOKEN_EXPRTN_DTM": "20261029132158"}}}
+{"ts": "2026-10-28T04:21:58.694718+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+{"ts": "2026-10-28T04:21:58.695620+00:00", "level": "INFO", "event": "api_response", "api": "ReqInvcNo", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"INVC_NO": "650000000001"}}}
+{"ts": "2026-10-28T04:21:58.696493+00:00", "level": "INFO", "event": "api_response", "api": "RegBook", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CUST_ID": "MOCK_CUSTOMER", "RCPT_YMD": "20261028", "CUST_USE_NO": "DEMO-001", "RCPT_DV": "01", "WORK_DV_CD": "01", "REQ_DV_CD": "01", "MPCK_KEY": "20261028_MOCK_CUSTOMER_DEMO-001", "CAL_DV_CD": "01", "FRT_DV_CD": "01", "CNTR_ITEM_CD": "01", "BOX_TYPE_CD": "02", "BOX_QTY": 1, "CUST_MGMT_DLCM_CD": "MOCK_CUSTOMER", "INVC_NO": "650000000001", "PRT_ST": "02", "DLV_DV": "01", "REMARK_1": "문 앞에 놓아 주세요", "ARRAY": [{"MPCK_SEQ": 1, "GDS_NM": "테스트 상품", "GDS_QTY": 2}], "SENDR_NM": "홍*동", "SENDR_ZIP_NO": "04524", "SENDR_ADDR": "서울특별시 중구***", "SENDR_DETAIL_ADDR": "***", "SENDR_TEL_NO1": "010", "SENDR_TEL_NO2": "****", "SENDR_TEL_NO3": "0000", "RCVR_NM": "김*수", "RCVR_ZIP_NO": "04524", "RCVR_ADDR": "서울특별시 중구***", "RCVR_DETAIL_ADDR": "***", "RCVR_TEL_NO1": "010", "RCVR_TEL_NO2": "****", "RCVR_TEL_NO3": "0000", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success."}}
+  DEMO-001: 주소 정제 성공
+    CLSFCD=939A, SUBCLSFCD=1g
+    CLLDLVBRANNM=테스트 집배점
+    CLLDLVEMPNICKNM=G03-01, P2PCD=P001
+    채번 INVC_NO=650000000001
+    RegBook RESULT_CD=S
+{"ts": "2026-10-28T04:21:58.698873+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+{"ts": "2026-10-28T04:21:58.699652+00:00", "level": "INFO", "event": "api_response", "api": "ReqInvcNo", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"INVC_NO": "650000000002"}}}
+{"ts": "2026-10-28T04:21:58.700714+00:00", "level": "INFO", "event": "api_response", "api": "RegBook", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CUST_ID": "MOCK_CUSTOMER", "RCPT_YMD": "20261028", "CUST_USE_NO": "DEMO-002", "RCPT_DV": "01", "WORK_DV_CD": "01", "REQ_DV_CD": "01", "MPCK_KEY": "20261028_MOCK_CUSTOMER_DEMO-002", "CAL_DV_CD": "01", "FRT_DV_CD": "01", "CNTR_ITEM_CD": "01", "BOX_TYPE_CD": "02", "BOX_QTY": 1, "CUST_MGMT_DLCM_CD": "MOCK_CUSTOMER", "INVC_NO": "650000000002", "PRT_ST": "02", "DLV_DV": "01", "REMARK_1": "문 앞에 놓아 주세요", "ARRAY": [{"MPCK_SEQ": 1, "GDS_NM": "테스트 상품", "GDS_QTY": 2}], "SENDR_NM": "홍*동", "SENDR_ZIP_NO": "04524", "SENDR_ADDR": "서울특별시 중구***", "SENDR_DETAIL_ADDR": "***", "SENDR_TEL_NO1": "010", "SENDR_TEL_NO2": "****", "SENDR_TEL_NO3": "0000", "RCVR_NM": "김*수", "RCVR_ZIP_NO": "04524", "RCVR_ADDR": "서울특별시 중구***", "RCVR_DETAIL_ADDR": "***", "RCVR_TEL_NO1": "010", "RCVR_TEL_NO2": "****", "RCVR_TEL_NO3": "0000", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success."}}
+  DEMO-002: 주소 정제 성공
+    CLSFCD=939A, SUBCLSFCD=1g
+    CLLDLVBRANNM=테스트 집배점
+    CLLDLVEMPNICKNM=G03-01, P2PCD=P001
+    채번 INVC_NO=650000000002
+    RegBook RESULT_CD=S
+2. 멱등 재요청: INVC_NO=650000000001, CJ 호출 전=7, 후=7
+   추가 호출=0회
+{"ts": "2026-10-28T04:21:58.702753+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "-20002", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "-20002", "RESULT_DETAIL": "분석불가"}}
+3. 주소정제 실패: RESULT_CD=-20002, 채번 추가 호출=0회
+4. 일시적 오류 재시도
+{"ts": "2026-10-28T04:21:58.703526+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "E500", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "E500", "RESULT_DETAIL": "injected fault"}}
+{"ts": "2026-10-28T04:21:58.703591+00:00", "level": "INFO", "event": "api_retry", "api": "ReqAddrRfnSm", "attempt": 1, "reason": "HTTP 500"}
+{"ts": "2026-10-28T04:21:58.726656+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 2, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+   attempt=1 실패 원인=HTTP 500, 재시도
+   attempt=2 결과=S
+{"ts": "2026-10-28T04:21:58.827402+00:00", "level": "INFO", "event": "api_retry", "api": "ReqAddrRfnSm", "attempt": 1, "reason": "TimeoutError"}
+{"ts": "2026-10-28T04:21:58.849242+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 2, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+   attempt=1 실패 원인=TimeoutError, 재시도
+   attempt=2 결과=S
+{"ts": "2026-10-28T04:21:58.850059+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "E401", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "E401", "RESULT_DETAIL": "Authentication failed"}}
+{"ts": "2026-10-28T04:21:59.792224+00:00", "level": "INFO", "event": "api_response", "api": "ReqOneDayToken", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CUST_ID": "MOCK_CUSTOMER", "BIZ_REG_NUM": "******0000"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"TOKEN_NUM": "MOCK***", "TOKEN_EXPRTN_DTM": "20261029132159"}}}
+{"ts": "2026-10-28T04:21:59.793158+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+5. 토큰 만료 E401: 발급 전=1회, 후=2회
+   재발급=1회, 주소정제 성공
+{"ts": "2026-10-28T04:21:59.794253+00:00", "level": "INFO", "event": "api_response", "api": "ReqAddrRfnSm", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "CLNTMGMCUSTCD": "MOCK_CUSTOMER", "ADDRESS": "서울특별시 중구***", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"CLSFCD": "939A", "SUBCLSFCD": "1g", "CLSFADDR": "***", "CLLDLVBRANNM": "테스트 집배점", "CLLDLVEMPNM": "홍*동", "CLLDLVEMPNICKNM": "G****1", "RSPSDIV": "01", "P2PCD": "P001"}}}
+{"ts": "2026-10-28T04:21:59.795366+00:00", "level": "INFO", "event": "api_response", "api": "ReqInvcNo", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": {"INVC_NO": "650000000003"}}}
+{"ts": "2026-10-28T04:21:59.796308+00:00", "level": "INFO", "event": "api_response", "api": "RegBook", "attempt": 1, "elapsed_ms": 1, "result_cd": "E", "request": {"CUST_ID": "MOCK_CUSTOMER", "RCPT_YMD": "20261028", "CUST_USE_NO": "DEMO-001", "RCPT_DV": "01", "WORK_DV_CD": "01", "REQ_DV_CD": "01", "MPCK_KEY": "20261028_MOCK_CUSTOMER_DEMO-001", "CAL_DV_CD": "01", "FRT_DV_CD": "01", "CNTR_ITEM_CD": "01", "BOX_TYPE_CD": "02", "BOX_QTY": 1, "CUST_MGMT_DLCM_CD": "MOCK_CUSTOMER", "INVC_NO": "650000000003", "PRT_ST": "02", "DLV_DV": "01", "REMARK_1": "문 앞에 놓아 주세요", "ARRAY": [{"MPCK_SEQ": 1, "GDS_NM": "테스트 상품", "GDS_QTY": 2}], "SENDR_NM": "홍*동", "SENDR_ZIP_NO": "04524", "SENDR_ADDR": "서울특별시 중구***", "SENDR_DETAIL_ADDR": "***", "SENDR_TEL_NO1": "010", "SENDR_TEL_NO2": "****", "SENDR_TEL_NO3": "0000", "RCVR_NM": "김*수", "RCVR_ZIP_NO": "04524", "RCVR_ADDR": "서울특별시 중구***", "RCVR_DETAIL_ADDR": "***", "RCVR_TEL_NO1": "010", "RCVR_TEL_NO2": "****", "RCVR_TEL_NO3": "0000", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "E", "RESULT_DETAIL": "ORA-00001"}}
+6. 원격 중복: RESULT_CD=E, RESULT_DETAIL=ORA-00001
+{"ts": "2026-10-28T04:21:59.797415+00:00", "level": "INFO", "event": "api_response", "api": "CnclBook", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CUST_ID": "MOCK_CUSTOMER", "RCPT_YMD": "20261028", "CUST_USE_NO": "DEMO-002", "RCPT_DV": "01", "WORK_DV_CD": "01", "REQ_DV_CD": "02", "MPCK_KEY": "20261028_MOCK_CUSTOMER_DEMO-002", "CAL_DV_CD": "01", "FRT_DV_CD": "01", "CNTR_ITEM_CD": "01", "BOX_TYPE_CD": "02", "BOX_QTY": 1, "CUST_MGMT_DLCM_CD": "MOCK_CUSTOMER", "INVC_NO": "650000000002", "PRT_ST": "02", "DLV_DV": "01", "REMARK_1": "문 앞에 놓아 주세요", "ARRAY": [{"MPCK_SEQ": 1, "GDS_NM": "테스트 상품", "GDS_QTY": 2}], "SENDR_NM": "홍*동", "SENDR_ZIP_NO": "04524", "SENDR_ADDR": "서울특별시 중구***", "SENDR_DETAIL_ADDR": "***", "SENDR_TEL_NO1": "010", "SENDR_TEL_NO2": "****", "SENDR_TEL_NO3": "0000", "RCVR_NM": "김*수", "RCVR_ZIP_NO": "04524", "RCVR_ADDR": "서울특별시 중구***", "RCVR_DETAIL_ADDR": "***", "RCVR_TEL_NO1": "010", "RCVR_TEL_NO2": "****", "RCVR_TEL_NO3": "0000", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success."}}
+7. 예약 취소: DEMO-002, RESULT_CD=S
+{"ts": "2026-10-28T04:21:59.798798+00:00", "level": "INFO", "event": "api_response", "api": "ReqOneGdsTrc", "attempt": 1, "elapsed_ms": 1, "result_cd": "S", "request": {"CLNTNUM": "MOCK_CUSTOMER", "INVC_NO": "650000000001", "TOKEN_NUM": "MOCK***"}, "response": {"RESULT_CD": "S", "RESULT_DETAIL": "Success.", "DATA": [{"INVC_NO": "650000000001", "CRG_ST": "11", "CRG_ST_NM": "집화", "SCAN_YMD": "20260101", "SCAN_HOUR": "120000", "DEALT_BRAN_NM": "테스트 집배점", "DEALT_BRAN_TEL": "02-****-0000", "DEALT_EMP_NM": "홍*동", "DEALT_EMP_TEL": "010-****-0000", "ACPTR_NM": "김*수"}, {"INVC_NO": "650000000001", "CRG_ST": "41", "CRG_ST_NM": "간선", "SCAN_YMD": "20260101", "SCAN_HOUR": "120000", "DEALT_BRAN_NM": "테스트 집배점", "DEALT_BRAN_TEL": "02-****-0000", "DEALT_EMP_NM": "홍*동", "DEALT_EMP_TEL": "010-****-0000", "ACPTR_NM": "김*수"}, {"INVC_NO": "650000000001", "CRG_ST": "82", "CRG_ST_NM": "배송출발", "SCAN_YMD": "20260101", "SCAN_HOUR": "120000", "DEALT_BRAN_NM": "테스트 집배점", "DEALT_BRAN_TEL": "02-****-0000", "DEALT_EMP_NM": "홍*동", "DEALT_EMP_TEL": "010-****-0000", "ACPTR_NM": "김*수"}, {"INVC_NO": "650000000001", "CRG_ST": "91", "CRG_ST_NM": "배송완료", "SCAN_YMD": "20260101", "SCAN_HOUR": "120000", "DEALT_BRAN_NM": "테스트 집배점", "DEALT_BRAN_TEL": "02-****-0000", "DEALT_EMP_NM": "홍*동", "DEALT_EMP_TEL": "010-****-0000", "ACPTR_NM": "김*수"}]}}
+8. 운송장 650000000001 추적
+   CRG_ST | 상태 | 처리일 | 처리시간 | 처리점소
+   11 | 집화 | 20260101 | 120000 | 테스트 집배점
+   41 | 간선 | 20260101 | 120000 | 테스트 집배점
+   82 | 배송출발 | 20260101 | 120000 | 테스트 집배점
+   91 | 배송완료 | 20260101 | 120000 | 테스트 집배점
+API별 호출 횟수 (mock 서버 기준)
+   ReqOneDayToken     2회
+   ReqAddrRfnSm       10회
+   ReqInvcNo          3회
+   RegBook            3회
+   CnclBook           1회
+   ReqOneGdsTrc       1회
+라벨: out/labels.json, out/labels.csv, out/label_<운송장>.html
+주의: 레이아웃 가정 (CJ 표준 운송장 가이드 미확인)
+구조화 로그: stderr 및 out/demo.log (마스킹 적용)
+
+# 실제 호출: CJ 공개 배송조회 웹페이지 (가짜 송장번호)
+# 명령: PYTHONPATH=src .venv/bin/python -m cj_toy real-tracking 000000000000
+진입 페이지 GET HTTP 상태: 200
+_csrf 획득 여부: True
+tracking-detail POST HTTP 상태: 200
+이벤트 개수: 0
+정규화 결과 (crgNm 제외): []
+
+종료 코드: 0

@@ -1,0 +1,8 @@
+# 로컬 전용
+ref/
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+out/
