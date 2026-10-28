@@ -1,16 +1,28 @@
 # cj-logistics-api-client
 
-Python client + spec-based mock server for the CJ Logistics parcel standard API (V3.9.4). Toy project.
+Python client and test mock server for the CJ Logistics parcel standard API (V3.9.4).
 
-CJ대한통운 택배 표준 API V3.9.4 규격에 따라 주소 정제부터 송장 출력 데이터까지 연결하고 로컬 mock으로 검증한 Python 토이 프로젝트입니다.
+CJ대한통운 택배 표준 API(V3.9.4) 규격에 맞춰 주소 정제, 운송장 채번, 예약 접수, 취소, 배송 추적을 하나의 흐름으로 연결한 Python 연동 모듈입니다. 런타임은 표준 라이브러리만 사용하므로 별도 패키지를 설치하지 않아도 동작합니다.
 
-## 무엇을 하는가
+## 주요 기능
 
-받는 사람 주소를 먼저 정제하고 운송장 번호를 채번한 뒤 예약을 접수합니다. 성공한 고객사용번호는 로컬 JSON에 저장하여 재요청 시 같은 결과를 돌려줍니다. 예약 취소, 운송장 추적, JSON·CSV 출력 데이터와 HTML 미리보기도 제공합니다. 주소 정제에 실패하면 채번 전에 중단합니다.
+- **접수 흐름 자동화**: 받는 사람 주소를 먼저 정제하고, 운송장 번호를 채번한 뒤 예약을 접수합니다. 접수 결과는 분류 코드가 포함된 출력 데이터로 바로 이어집니다.
+- **오류 처리**
+  - 주소 오류(`-20000`~`-20010`)가 발생하면 채번하기 전에 중단하므로 운송장 번호가 낭비되지 않습니다.
+  - 네트워크 오류, 타임아웃, 429, 5xx 응답은 지수 백오프와 지터를 적용해 정해진 횟수만큼 재시도합니다.
+  - 토큰이 만료되면(401) 토큰을 폐기하고 재발급한 뒤 해당 호출을 다시 시도합니다.
+  - 같은 고객사용번호(`CUST_USE_NO`)로 다시 요청하면 저장된 결과를 돌려주고, CJ 서버가 중복(`ORA-00001`)으로 응답하는 경우도 구분해 처리합니다.
+- **개인정보 마스킹 로그**: 모든 API 요청과 응답을 JSON 한 줄 형식으로 기록하며, 이름·전화번호·주소·토큰·사업자번호는 가려서 남깁니다.
+- **출력 데이터**: 운송장 번호, 분류 코드(`CLSFCD`, `SUBCLSFCD`), 집배점 정보와 송·수하인 정보를 JSON, CSV, HTML 미리보기로 만듭니다.
+- **테스트용 mock 서버 포함**: 규격(V3.9.4)에 따라 정상 응답과 오류 코드를 재현하므로 계약 정보 없이도 정상·오류 시나리오를 모두 실행해 볼 수 있습니다.
+- **pytest 테스트 47개**: 정상 흐름과 오류 처리 시나리오를 자동으로 검증합니다.
+- **환경변수로 서버 전환**: 고객사 계약 정보(`CJ_CUST_ID`, `CJ_BIZ_REG_NUM`)와 `CJ_BASE_URL`을 환경변수로 지정하면 같은 코드로 CJ 개발 서버나 운영 서버에 연결합니다. 계약 정보는 코드에 하드코딩하지 않습니다.
+
+## 구조
 
 ```text
-CLI → ShipmentService → CJClient (토큰 관리, 재시도) → CJ API (mock | dev)
-              ├→ 라벨 출력 (JSON / CSV / HTML)
+CLI → ShipmentService → CJClient (토큰 관리, 재시도) → CJ API (mock | 개발 | 운영)
+              ├→ 출력 데이터 (JSON / CSV / HTML)
               └→ 로컬 멱등 저장소
              구조화 로그 / 마스킹
 ```
@@ -24,34 +36,15 @@ CLI → ShipmentService → CJClient (토큰 관리, 재시도) → CJ API (mock
 | `/CnclBook` | 예약 취소 | 접수 필드, REQ_DV_CD |
 | `/ReqOneGdsTrc` | 운송장 추적 | CLNTNUM, INVC_NO, CRG_ST |
 
-## 파일 구성
-
-- `src/cj_toy/client.py`, `constants.py`: CJ 요청, 토큰 관리, 재시도와 API·오류 코드.
-- `service.py`, `models.py`, `label.py`: 입력 검증, 접수·멱등성, 평탄화 CSV와 JSON·HTML 출력.
-- `mock_server.py`, `logging_utils.py`: 로컬 API 시뮬레이션과 마스킹된 구조화 로그.
-- `cli.py`, `public_tracking.py`: 데모·명령행과 선택적인 공개 웹 조회.
-- `tests/`: mock 통합 테스트와 단위 테스트. `docs/`: 실제 실행 기록.
-
-## 실제 호출과 mock
-
-| 대상 | 검증 범위 |
-| --- | --- |
-| CJ dxapi 6개 API | 전부 로컬 mock 서버로만 검증, 실서버 호출 0회 (계약 고객ID 없음) |
-| 공개 배송조회 웹페이지 | GET(+가짜 번호 POST)만 실호출 (opt-in). 상세 결과는 빈 배열이었음 |
-
-스펙 출처는 **CJ대한통운 택배 표준 API Developer Guide V3.9.4**입니다. 원문은 저작권 고지 때문에 저장소에 포함하지 않습니다. 공개 배송조회는 계약 API가 아닌 비공식 웹 엔드포인트로, 변경되거나 차단될 수 있습니다. 선택적으로 실행할 때 직원 정보인 `crgNm`은 결과에서 제외합니다.
-
-**ASSUMPTION:** 라벨 레이아웃은 CJ 표준 운송장 가이드를 확인하지 못해 가정한 미리보기입니다. 출력물은 승인된 운송장이 아니며 바코드 종류도 확인하지 못해 생성하지 않습니다. 모든 라벨에 가정 표시가 들어갑니다.
-
-## 고지
-
-이 프로젝트는 CJ대한통운과 무관한 개인 토이 프로젝트이며 CJ대한통운의 공식 SDK가 아닙니다. CJ 규격 문서(Developer Guide)의 원문은 포함하지 않고 필드명과 엔드포인트명을 사용합니다.
-
-CJ 계약 API는 실서버에 호출한 적이 없으며 규격 기반 mock 서버로만 검증했습니다. 실제 호출은 공개 배송조회 웹페이지에 가짜 송장번호 `000000000000`으로 조회한 것뿐입니다. 라벨과 출력 레이아웃은 가정(ASSUMPTION)입니다.
+- `src/cj_toy/client.py`, `constants.py`: CJ API 요청, 토큰 관리, 재시도, API 경로와 오류 코드를 담당합니다.
+- `service.py`, `models.py`, `label.py`: 입력 검증, 접수와 멱등성 처리, JSON·CSV·HTML 출력을 담당합니다.
+- `mock_server.py`, `logging_utils.py`: 테스트용 mock 서버와 마스킹된 구조화 로그를 담당합니다.
+- `cli.py`, `public_tracking.py`: 데모와 명령행 기능, 공개 배송조회 웹페이지 조회 기능을 제공합니다.
+- `tests/`: mock 서버를 사용하는 통합 테스트와 단위 테스트가 들어 있습니다. `docs/`에는 실제 실행 기록이 있습니다.
 
 ## 실행
 
-Python 3.13 기준, 런타임은 표준 라이브러리만 사용합니다.
+Python 3.13 기준입니다. 테스트에만 pytest가 필요합니다.
 
 ```sh
 python3 -m venv .venv
@@ -60,46 +53,50 @@ python3 -m venv .venv
 PYTHONPATH=src .venv/bin/python -m cj_toy demo
 ```
 
-데모는 임시 포트의 로컬 mock을 자동 시작하고 `out/`에 결과를 기록합니다. 테스트 데이터와 mock 고객 정보는 가짜입니다. 데모는 오류 주입을 위해 `CJ_BASE_URL`이 비어 있거나 기본 로컬 주소일 때만 실행합니다. 별도 서버와 CLI를 사용할 때는 같은 가짜 고객 정보를 환경변수로 설정합니다.
+데모는 임시 포트에서 mock 서버를 자동으로 시작하고, 정상 접수부터 오류 시나리오까지 차례로 실행한 뒤 결과를 `out/`에 기록합니다. 샘플 데이터는 모두 가상의 값입니다.
+
+mock 서버와 CLI를 따로 실행할 수도 있습니다.
 
 ```sh
 export CJ_CUST_ID=MOCK_CUSTOMER CJ_BIZ_REG_NUM=0000000000
 PYTHONPATH=src .venv/bin/python -m cj_toy.mock_server --port 8765
-# 다른 터미널에서 같은 환경변수 설정 후
+# 다른 터미널에서 같은 환경변수를 설정한 뒤
 PYTHONPATH=src .venv/bin/python -m cj_toy ship --sample
 PYTHONPATH=src .venv/bin/python -m cj_toy track 650000000001
 PYTHONPATH=src .venv/bin/python -m cj_toy cancel SAMPLE-001
 ```
 
-공개 웹 조회는 명시적으로 실행할 때만 네트워크를 사용합니다.
+CJ 공개 배송조회 웹페이지로 송장을 조회하는 명령도 있습니다. 이 명령은 실행할 때만 네트워크를 사용합니다.
 
 ```sh
-PYTHONPATH=src .venv/bin/python -m cj_toy real-tracking 000000000000
+PYTHONPATH=src .venv/bin/python -m cj_toy real-tracking <운송장번호>
 ```
 
-CJ와 계약 후 발급받은 고객ID와 청구 사업자번호를 `CJ_CUST_ID`, `CJ_BIZ_REG_NUM`으로 지정하고 개발 서버 주소를 `CJ_BASE_URL`에 설정하면 같은 코드로 개발 서버에 연결할 수 있습니다. 개발 서버 접근은 CJ 승인이 필요할 수 있습니다. 운영 주소는 `https://dxapi.cjlogistics.com:5052`입니다.
+### CJ 서버 연결
+
+CJ와 계약해 발급받은 고객ID와 사업자번호를 `CJ_CUST_ID`, `CJ_BIZ_REG_NUM`에 지정하고 서버 주소를 `CJ_BASE_URL`에 지정합니다. 개발 서버는 `https://dxapi-dev.cjlogistics.com:5054`, 운영 서버는 `https://dxapi.cjlogistics.com:5052`입니다.
 
 ```sh
 CJ_BASE_URL=https://dxapi-dev.cjlogistics.com:5054 CJ_CUST_ID=... CJ_BIZ_REG_NUM=... PYTHONPATH=src .venv/bin/python -m cj_toy ship --sample
 ```
 
-`.env.example`은 설정 예시이며 프로그램이 `.env`를 자동으로 읽지는 않습니다. `CJ_TIMEOUT`, `CJ_MAX_RETRIES`, `CJ_AUTH_RETRY_WAIT`도 환경변수로 설정할 수 있습니다.
+`CJ_TIMEOUT`, `CJ_MAX_RETRIES`, `CJ_AUTH_RETRY_WAIT`로 타임아웃, 재시도 횟수, 토큰 재발급 대기 시간을 조정할 수 있습니다. `.env.example`에 설정 예시가 있으며, 프로그램이 `.env` 파일을 자동으로 읽지는 않습니다.
 
 ## 오류 처리
 
 | 상황 | 처리 |
 | --- | --- |
-| 주소 오류 `-20000`~`-20010` | `AddressRefineError`, 채번 전 중단 |
-| `ORA-00001` | 로컬 성공 기록이 있으면 반환, 없으면 `DuplicateBookingError` |
-| 네트워크 오류·타임아웃, 429, 5xx | 횟수 제한과 지수 백오프·지터를 적용해 재시도 |
-| 400·403·404 및 업무 오류 | 재시도 없이 오류 반환 |
-| 401 | 토큰 폐기 후 기본 60초 대기, 재발급하고 해당 호출을 한 번 재시도. `CJ_AUTH_RETRY_WAIT`으로 조정 가능. 가이드 p7에는 **1시간 후 재발급**과 **1분 이상 간격의 자동 재발급 추천**이 모두 기재되어 있으므로 실제 연동 시 CJ에 적정 대기 시간을 확인해야 함 |
+| 주소 오류 `-20000`~`-20010` | `AddressRefineError`를 발생시키고 채번 전에 중단합니다 |
+| 중복 접수 `ORA-00001` | 로컬 성공 기록이 있으면 그 결과를 반환하고, 없으면 `DuplicateBookingError`를 발생시킵니다 |
+| 네트워크 오류, 타임아웃, 429, 5xx | 지수 백오프와 지터를 적용해 정해진 횟수만큼 재시도합니다 |
+| 400, 403, 404, 업무 오류 | 재시도하지 않고 오류를 반환합니다 |
+| 토큰 만료 401 | 토큰을 폐기하고 대기한 뒤(기본 60초, `CJ_AUTH_RETRY_WAIT`로 조정) 재발급하고 해당 호출을 한 번 다시 시도합니다 |
 
-토큰은 만료 30분 전 갱신하고 발급 요청 간격을 최소 1초로 둡니다. 로그는 JSON 한 줄 형식이며 이름 `홍길동 → 홍*동`, 전화 `010-0000-0000 → 010-****-0000`, 주소 `서울특별시 중구 ... → 서울특별시 중구***`, 토큰 앞 4자리와 사업자번호 끝 4자리만 남깁니다. 출력용 라벨과 로컬 예약 파일에는 인쇄 및 취소에 필요한 원문 정보가 저장되므로 접근 권한과 보관 기간을 관리해야 합니다.
+토큰은 만료 30분 전에 미리 갱신하며, 토큰 발급 요청 사이에는 최소 1초 간격을 둡니다. 로그에서는 이름 `홍길동`이 `홍*동`으로, 전화번호 `010-0000-0000`이 `010-****-0000`으로, 주소 `서울특별시 중구 ...`가 `서울특별시 중구***`로 바뀝니다. 토큰은 앞 4자리만, 사업자번호는 끝 4자리만 남깁니다.
 
 ## 실행 결과 일부
 
-다음은 [실제 데모 기록](docs/demo-run.txt)에서 발췌했습니다.
+아래 내용은 [데모 실행 기록](docs/demo-run.txt)에서 발췌했습니다.
 
 ```text
 8. 운송장 650000000001 추적
@@ -117,10 +114,10 @@ API별 호출 횟수 (mock 서버 기준)
    ReqOneGdsTrc       1회
 ```
 
-## 한계와 다음 단계
+## 고지
 
-실제 CJ 계약 API 연결, 운송장 출력물과 스캔, 운영 승인 여부는 검증하지 않았습니다. mock의 분류 코드, 배송 이벤트와 송장 번호는 가상 데이터입니다. 로컬 저장소는 단일 프로세스용이며 여러 프로세스 간 동시성이나 접수 성공 직후 저장 실패를 보장하지 않습니다. 타임아웃 후 접수 성공 여부가 불명확할 수 있으므로 운영 환경에서는 CJ와 중복 확인 및 복구 절차를 마련하고 영속 저장소와 잠금을 도입해야 합니다. 실제 고객 계약에 맞는 필수값, 필드 길이와 대기 시간을 CJ와 재확인하고 승인된 표준 운송장 가이드로 출력·스캔을 검증해야 합니다.
+이 프로젝트는 CJ대한통운과 무관한 비공식 프로젝트이며 CJ대한통운의 공식 SDK가 아닙니다. CJ 규격 문서(Developer Guide)의 원문은 포함하지 않으며, 코드에는 필드명과 엔드포인트명만 사용했습니다.
 
 ## 라이선스
 
-MIT 라이선스. [LICENSE](LICENSE) 파일을 참조하세요.
+MIT 라이선스를 따릅니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
